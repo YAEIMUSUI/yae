@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yæ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: #000;
+    color: #e0e0e0;
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(800px, 120vw);
+    opacity: 0;
+    animation: fadeIn 3.6s ease-out 0s forwards;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    z-index: 0;
+  }
+  .hero-bg img {
+    width: 100%;
+    opacity: 0.08;
+  }
+
+  .hero-symbol {
+    width: min(360px, 55vw);
+    opacity: 0;
+    animation: fadeIn 2.4s ease-out 0.6s forwards;
+    user-select: none;
+    -webkit-user-drag: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-logo {
+    width: min(280px, 45vw);
+    opacity: 0;
+    animation: fadeIn 2.4s ease-out 1.4s forwards;
+    margin-top: 36px;
+    user-select: none;
+    -webkit-user-drag: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.25), transparent);
+    opacity: 0;
+    animation: fadeIn 1.6s ease-out 3s forwards, pulse 2.4s ease-in-out 3s infinite;
+  }
+
+  /* ── GALLERY ── */
+  .gallery {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 80px 24px 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 120px;
+  }
+
+  .piece {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+  }
+
+  .piece.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .piece a {
+    display: block;
+    text-decoration: none;
+    position: relative;
+  }
+
+  .piece img {
+    width: 100%;
+    max-width: 400px;
+    display: block;
+    margin: 0 auto;
+    border: none;
+    filter: grayscale(0.15);
+    transition: filter 0.6s ease;
+  }
+
+  .piece a:hover img {
+    filter: grayscale(0);
+  }
+
+  .piece-title {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    font-weight: 300;
+  }
+
+  /* ── GHOST (unreleased slot) ── */
+  .ghost {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+  }
+  .ghost.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .ghost-slot {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 9 / 16;
+    margin: 0 auto;
+    border: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ghost-mark {
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: rgba(255,255,255,0.08);
+    font-weight: 300;
+    text-transform: uppercase;
+  }
+
+  /* ── alternating alignment ── */
+  .gallery > :nth-child(odd) {
+    align-self: flex-start;
+    padding-left: 5%;
+  }
+  .gallery > :nth-child(even) {
+    align-self: flex-end;
+    padding-right: 5%;
+  }
+
+  /* ── FOOTER ── */
+  .foot {
+    text-align: center;
+    padding: 60px 24px 80px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.15);
+    font-weight: 300;
+  }
+
+  .foot span {
+    display: inline-block;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 20px;
+  }
+
+  /* ── long press / tap hint on mobile ── */
+  .save-hint {
+    display: none;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.18);
+    margin-top: 8px;
+    font-weight: 300;
+  }
+
+  @media (hover: none) {
+    .save-hint { display: block; }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .gallery {
+      gap: 80px;
+      padding: 60px 16px 120px;
+    }
+    .gallery > :nth-child(odd),
+    .gallery > :nth-child(even) {
+      align-self: center;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .piece img {
+      max-width: 85vw;
+    }
+    .hero-symbol {
+      width: min(280px, 60vw);
+    }
+    .hero-logo {
+      width: min(200px, 48vw);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"><img src="assets/yae-symbol.png" alt=""></div>
+  <img class="hero-symbol" src="assets/yae-symbol.png" alt="">
+  <img class="hero-logo" src="assets/yae-logo.png" alt="Yæ">
+  <div class="scroll-hint"></div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery">
+
+  <div class="piece">
+    <a href="wallpapers/ketamine.png" target="_blank">
+      <img src="wallpapers/ketamine.png" alt="KETAMINE" loading="lazy">
+    </a>
+    <div class="piece-title">KETAMINE</div>
+    <div class="save-hint">long press to save</div>
+  </div>
+
+  <div class="ghost">
+    <div class="ghost-slot">
+      <span class="ghost-mark">&mdash;</span>
+    </div>
+  </div>
+
+  <div class="ghost">
+    <div class="ghost-slot">
+      <span class="ghost-mark">&mdash;</span>
+    </div>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<div class="foot">
+  <span>Yæ</span>
+</div>
+
+<!-- SCROLL REVEAL -->
+<script>
+  const items = document.querySelectorAll('.piece, .ghost');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  items.forEach(p => observer.observe(p));
+</script>
+
+</body>
+</html>
