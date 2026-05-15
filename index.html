@@ -189,19 +189,23 @@
     padding-top: 20px;
   }
 
-  /* ── long press / tap hint on mobile ── */
-  .save-hint {
-    display: none;
+  /* ── download link ── */
+  .dl {
+    display: block;
     text-align: center;
+    margin-top: 16px;
     font-size: 10px;
-    letter-spacing: 2px;
-    color: rgba(255,255,255,0.18);
-    margin-top: 8px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
     font-weight: 300;
   }
-
-  @media (hover: none) {
-    .save-hint { display: block; }
+  .dl a {
+    color: rgba(255,255,255,0.25);
+    text-decoration: none;
+    transition: color 0.4s ease;
+  }
+  .dl a:hover {
+    color: rgba(255,255,255,0.6);
   }
 
   /* ── ANIMATIONS ── */
@@ -257,7 +261,7 @@
       <img src="wallpapers/ketamine.png" alt="KETAMINE" loading="lazy">
     </a>
     <div class="piece-title">KETAMINE</div>
-    <div class="save-hint">long press to save</div>
+    <div class="dl"><a href="wallpapers/ketamine.png" download="KETAMINE_Yae.png">download</a></div>
   </div>
 
   <div class="ghost">
