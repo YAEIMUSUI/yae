@@ -105,10 +105,9 @@
     transform: translateY(0);
   }
 
-  .piece a {
+  .piece .thumb {
     display: block;
-    text-decoration: none;
-    position: relative;
+    cursor: pointer;
   }
 
   .piece img {
@@ -121,7 +120,7 @@
     transition: filter 0.6s ease;
   }
 
-  .piece a:hover img {
+  .piece .thumb:hover img {
     filter: grayscale(0);
   }
 
@@ -189,26 +188,48 @@
     padding-top: 20px;
   }
 
-  /* ── download link ── */
-  .dl {
-    display: block;
-    text-align: center;
-    margin-top: 16px;
+  /* ── LIGHTBOX ── */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0,0,0,0.92);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  .lightbox.open {
+    display: flex;
+  }
+  .lightbox img {
+    max-height: 80vh;
+    max-width: 90vw;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+  }
+  .lightbox-dl {
+    margin-top: 24px;
     font-size: 10px;
     letter-spacing: 4px;
     text-transform: uppercase;
     font-weight: 300;
+    cursor: default;
   }
-  .dl a {
-    color: rgba(255,255,255,0.4);
+  .lightbox-dl a {
+    color: rgba(255,255,255,0.5);
     text-decoration: none;
     transition: color 0.4s ease;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
     padding-bottom: 2px;
+    pointer-events: auto;
+    cursor: pointer;
   }
-  .dl a:hover {
-    color: rgba(255,255,255,0.7);
-    border-bottom-color: rgba(255,255,255,0.35);
+  .lightbox-dl a:hover {
+    color: rgba(255,255,255,0.8);
+    border-bottom-color: rgba(255,255,255,0.4);
   }
 
   /* ── ANIMATIONS ── */
@@ -260,11 +281,10 @@
 <section class="gallery">
 
   <div class="piece">
-    <a href="wallpapers/ketamine.png" target="_blank">
+    <div class="thumb" data-src="wallpapers/ketamine.png" data-name="KETAMINE_Yae.png">
       <img src="wallpapers/ketamine.png" alt="KETAMINE" loading="lazy">
-    </a>
+    </div>
     <div class="piece-title">KETAMINE</div>
-    <div class="dl"><a href="wallpapers/ketamine.png" download="KETAMINE_Yae.png">download</a></div>
   </div>
 
   <div class="ghost">
@@ -286,8 +306,17 @@
   <span>Yæ</span>
 </div>
 
-<!-- SCROLL REVEAL -->
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lb">
+  <img id="lb-img" src="" alt="">
+  <div class="lightbox-dl">
+    <a id="lb-dl" href="" download="">download</a>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
 <script>
+  // Scroll reveal
   const items = document.querySelectorAll('.piece, .ghost');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -298,6 +327,35 @@
     });
   }, { threshold: 0.15 });
   items.forEach(p => observer.observe(p));
+
+  // Lightbox
+  const lb = document.getElementById('lb');
+  const lbImg = document.getElementById('lb-img');
+  const lbDl = document.getElementById('lb-dl');
+
+  document.querySelectorAll('.thumb').forEach(t => {
+    t.addEventListener('click', () => {
+      lbImg.src = t.dataset.src;
+      lbDl.href = t.dataset.src;
+      lbDl.download = t.dataset.name;
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  lb.addEventListener('click', (e) => {
+    if (e.target === lb || e.target === lbImg) {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
 </script>
 
 </body>
